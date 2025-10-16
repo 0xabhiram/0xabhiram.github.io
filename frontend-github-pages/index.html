@@ -11,17 +11,24 @@
         <header>
             <h1>📽️ Frame Extractor</h1>
             <p>Upload your document to extract and edit frames (Client-Side Version)</p>
-            <div class="version-badge">GitHub Pages Version v2.3</div>
+            <div class="version-badge">GitHub Pages Version v2.4</div>
         </header>
 
-        <!-- Upload Section -->
+        <!-- Input Section -->
         <section class="upload-section">
-            <div class="upload-box">
-                <input type="file" id="fileInput" accept=".txt,.docx" style="display: none;">
-                <button id="uploadBtn" class="btn btn-primary">
-                    <span id="uploadIcon">📁</span> Choose File
-                </button>
-                <p id="fileName" class="file-name"></p>
+            <div class="input-tabs">
+                <button class="tab-btn active" data-tab="file">📁 Upload File</button>
+                <button class="tab-btn" data-tab="text">📝 Paste Text</button>
+            </div>
+            
+            <!-- File Upload Tab -->
+            <div class="tab-content active" id="file-tab">
+                <div class="upload-box">
+                    <input type="file" id="fileInput" accept=".txt,.docx" style="display: none;">
+                    <button id="uploadBtn" class="btn btn-primary">
+                        <span id="uploadIcon">📁</span> Choose File
+                    </button>
+                    <p id="fileName" class="file-name"></p>
                 <div class="file-format-info">
                     <h4>📋 Supported File Formats:</h4>
                     <div class="format-options">
@@ -40,6 +47,49 @@
                     </p>
                 </div>
             </div>
+            </div>
+            
+            <!-- Text Input Tab -->
+            <div class="tab-content" id="text-tab">
+                <div class="text-input-box">
+                    <label for="textInput" class="text-input-label">
+                        <span class="label-icon">📝</span>
+                        Paste your content here:
+                    </label>
+                    <textarea 
+                        id="textInput" 
+                        class="text-input-area" 
+                        placeholder="Paste your frames content here...
+
+Example:
+Frame 1 [0:00–0:07 | Quick montage: glowing text, AI images forming, camera zooms through scenes]
+
+🎙 Voice-Over (mysterious, confident):
+
+"What if one sentence could turn into a world?
+What if you could write a film… instead of shooting it?"
+
+Frame 2 [0:08–0:15 | Visual: AI tools transforming text → visuals → motion]
+
+🎙 Voice-Over:
+
+"In this module, you'll discover how words become images, motion, and sound — the full power to build your own short film using AI.""
+                        rows="15"
+                    ></textarea>
+                    <div class="text-input-buttons">
+                        <button id="analyzeTextBtn" class="btn btn-primary">
+                            <span>🔍</span> Analyze Text
+                        </button>
+                        <button id="loadSampleBtn" class="btn btn-secondary">
+                            <span>📄</span> Load Sample
+                        </button>
+                        <button id="clearTextBtn" class="btn btn-danger">
+                            <span>🗑️</span> Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
             <div id="uploadStatus" class="status-message"></div>
         </section>
 

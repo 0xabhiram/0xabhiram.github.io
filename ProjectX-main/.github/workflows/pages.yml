@@ -1,0 +1,82 @@
+name: Deploy frontend to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  WORKDIR: 'frontend'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKDIR }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ${{ env.WORKDIR }}/package-lock.json
+      - name: Install deps
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Build
+        env:
+          CI: true
+        run: |
+          if npm run | grep -qE ' build'; then
+            npm run build
+          else
+            echo "No build script found. If static, put files in frontend/public."
+          fi
+      - name: Detect build directory
+        id: detect
+        shell: bash
+        run: |
+          cand=()
+          [ -d dist ] && cand+=("dist")
+          [ -d build ] && cand+=("build")
+          [ -d out ] && cand+=("out")
+          [ -d public ] && cand+=("public")
+          if [ ${#cand[@]} -eq 0 ]; then
+            echo "No build output found (dist/build/out/public)."
+            exit 1
+          fi
+          echo "BUILD_DIR=${cand[0]}" >> $GITHUB_OUTPUT
+      - name: Prepare artifact
+        run: |
+          mkdir -p "${{ steps.detect.outputs.BUILD_DIR }}"
+          touch "${{ steps.detect.outputs.BUILD_DIR }}/.nojekyll"
+          if [ -f "${{ steps.detect.outputs.BUILD_DIR }}/index.html" ]; then
+            cp "${{ steps.detect.outputs.BUILD_DIR }}/index.html" "${{ steps.detect.outputs.BUILD_DIR }}/404.html" || true
+          fi
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.WORKDIR }}/${{ steps.detect.outputs.BUILD_DIR }}
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

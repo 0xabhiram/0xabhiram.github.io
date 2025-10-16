@@ -12,12 +12,118 @@ const saveBtn = document.getElementById('saveBtn');
 const exportBtn = document.getElementById('exportBtn');
 const clearBtn = document.getElementById('clearBtn');
 
+// New elements for tabs and text input
+const tabBtns = document.querySelectorAll('.tab-btn');
+const textInput = document.getElementById('textInput');
+const analyzeTextBtn = document.getElementById('analyzeTextBtn');
+const loadSampleBtn = document.getElementById('loadSampleBtn');
+const clearTextBtn = document.getElementById('clearTextBtn');
+
 // Event Listeners
 uploadBtn.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', handleFileUpload);
 saveBtn.addEventListener('click', saveFrames);
 exportBtn.addEventListener('click', exportPDF);
 clearBtn.addEventListener('click', clearAllData);
+
+// Tab functionality
+tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+// Text input functionality
+analyzeTextBtn.addEventListener('click', handleTextAnalysis);
+loadSampleBtn.addEventListener('click', loadSampleContent);
+clearTextBtn.addEventListener('click', clearTextContent);
+
+// Tab switching function
+function switchTab(tabName) {
+    // Update tab buttons
+    tabBtns.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.tab === tabName) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Update tab content
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById(`${tabName}-tab`).classList.add('active');
+}
+
+// Handle text analysis
+function handleTextAnalysis() {
+    const text = textInput.value.trim();
+    
+    if (!text) {
+        showStatus('Please enter some text to analyze.', 'error');
+        return;
+    }
+    
+    try {
+        showStatus('Analyzing text...', 'info');
+        
+        // Parse frames
+        const frames = parseFrames(text);
+        
+        if (frames.length === 0) {
+            showStatus(`No frames found. Supported formats:\n• Frame 1: content\n• Frame 1 [timestamp] content\n• Frame 1\ncontent\n• Frame 1 - content`, 'error');
+            return;
+        }
+        
+        showStatus(`✅ Success! Extracted ${frames.length} frames from text`, 'success');
+        currentFrames = frames;
+        displayFrames(frames);
+        
+    } catch (error) {
+        showStatus(`❌ Error analyzing text: ${error.message}`, 'error');
+    }
+}
+
+// Load sample content
+function loadSampleContent() {
+    const sampleContent = `Frame 1 [0:00–0:07 | Quick montage: glowing text, AI images forming, camera zooms through scenes]
+
+🎙 Voice-Over (mysterious, confident):
+
+"What if one sentence could turn into a world?
+What if you could write a film… instead of shooting it?"
+
+Frame 2 [0:08–0:15 | Visual: AI tools transforming text → visuals → motion]
+
+🎙 Voice-Over:
+
+"In this module, you'll discover how words become images, motion, and sound — the full power to build your own short film using AI."
+
+Frame 3 [0:16–0:25 | Flashback visuals: previous module moments]
+
+🎙 Voice-Over:
+
+"Last time, you learned how AI can help you think and study smarter. Now, you'll use it to create — to imagine, design, and bring ideas alive."
+
+Frame 4 [0:26–0:37 | Visual: vibrant AI art forming in seconds]
+
+🎙 Voice-Over:
+
+"First — Image Mastery. You'll learn how to describe light, mood, and detail so clearly that AI paints your vision perfectly."
+
+Frame 5 [0:38–0:47 | Visual: smooth video transitions, camera moves, AI-generated scenes]
+
+🎙 Voice-Over:
+
+"Next — Video Mastery. Where those still images begin to move, flow, and tell stories that feel cinematic."`;
+    
+    textInput.value = sampleContent;
+    showStatus('Sample content loaded! Click "Analyze Text" to extract frames.', 'info');
+}
+
+// Clear text content
+function clearTextContent() {
+    textInput.value = '';
+    showStatus('Text cleared.', 'info');
+}
 
 // Handle file upload (client-side)
 async function handleFileUpload(event) {
@@ -426,7 +532,7 @@ function showStatus(message, type) {
 // Clear old data and load saved frames on page load
 window.addEventListener('load', () => {
     // Debug: Check if we're running the latest version
-    console.log('Frame Extractor v2.3 loaded - Enhanced frame parsing enabled');
+    console.log('Frame Extractor v2.4 loaded - Text input with tabs enabled');
     console.log('Mammoth library available:', typeof mammoth !== 'undefined');
     
     // Clear any old/stale data first
