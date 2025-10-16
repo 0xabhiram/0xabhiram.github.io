@@ -75,6 +75,50 @@ header p {
     font-style: italic;
 }
 
+.file-format-info {
+    margin-top: 20px;
+    text-align: left;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.file-format-info h4 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.format-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.format-option {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+}
+
+.format-option small {
+    color: #6c757d;
+    display: block;
+    margin-top: 5px;
+}
+
+.info-text a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.info-text a:hover {
+    text-decoration: underline;
+}
+
 .status-message {
     margin-top: 20px;
     padding: 15px;

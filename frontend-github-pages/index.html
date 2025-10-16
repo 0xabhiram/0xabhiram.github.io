@@ -22,7 +22,23 @@
                     <span id="uploadIcon">📁</span> Choose File
                 </button>
                 <p id="fileName" class="file-name"></p>
-                <p class="info-text">Note: This version works with text files and basic DOCX files. For full functionality, use the server version.</p>
+                <div class="file-format-info">
+                    <h4>📋 Supported File Formats:</h4>
+                    <div class="format-options">
+                        <div class="format-option">
+                            <strong>✅ Text Files (.txt)</strong><br>
+                            <small>Full support - upload any .txt file with frames</small>
+                        </div>
+                        <div class="format-option">
+                            <strong>⚠️ DOCX Files (.docx)</strong><br>
+                            <small>Basic support - extracts text content only</small>
+                        </div>
+                    </div>
+                    <p class="info-text">
+                        <strong>💡 Tip:</strong> Save your document as a .txt file for best results, or 
+                        <a href="#full-version" onclick="showFullVersionInfo()">deploy the full version</a> for complete DOCX/PDF support.
+                    </p>
+                </div>
             </div>
             <div id="uploadStatus" class="status-message"></div>
         </section>
@@ -43,6 +59,7 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/mammoth@1.4.21/mammoth.browser.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

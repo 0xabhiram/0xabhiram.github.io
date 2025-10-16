@@ -34,10 +34,9 @@ async function handleFileUpload(event) {
         if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
             content = await readTextFile(file);
         } else if (file.name.endsWith('.docx')) {
-            showStatus('DOCX files require server processing. Please use a text file or the full version.', 'error');
-            return;
+            content = await readDocxFile(file);
         } else {
-            showStatus('Unsupported file type. Please use .txt files.', 'error');
+            showStatus('Unsupported file type. Please use .txt or .docx files.', 'error');
             return;
         }
         
@@ -65,6 +64,30 @@ function readTextFile(file) {
         reader.onload = (e) => resolve(e.target.result);
         reader.onerror = (e) => reject(new Error('Failed to read file'));
         reader.readAsText(file);
+    });
+}
+
+// Read DOCX file using Mammoth library
+function readDocxFile(file) {
+    return new Promise((resolve, reject) => {
+        if (typeof mammoth === 'undefined') {
+            reject(new Error('DOCX processing library not loaded. Please refresh the page.'));
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const arrayBuffer = e.target.result;
+            mammoth.extractRawText({arrayBuffer: arrayBuffer})
+                .then(function(result) {
+                    resolve(result.value);
+                })
+                .catch(function(error) {
+                    reject(new Error('Failed to process DOCX file: ' + error.message));
+                });
+        };
+        reader.onerror = (e) => reject(new Error('Failed to read DOCX file'));
+        reader.readAsArrayBuffer(file);
     });
 }
 
@@ -242,6 +265,37 @@ function clearAllData() {
     }
 }
 
+// Show full version deployment information
+function showFullVersionInfo() {
+    const info = `🚀 DEPLOY FULL VERSION FOR COMPLETE FUNCTIONALITY
+
+To get full DOCX and PDF support:
+
+1. NETLIFY (Recommended - Free):
+   • Go to netlify.com
+   • Connect GitHub repo: https://github.com/0xabhiram/Arjun-Shetty
+   • Auto-deploy with full backend support
+
+2. RENDER (Free Tier):
+   • Go to render.com
+   • Connect GitHub repo
+   • Deploy as Web Service
+
+Features in Full Version:
+✅ Complete DOCX/PDF processing
+✅ Server-side frame extraction
+✅ Advanced PDF export
+✅ Data persistence
+✅ No file size limits
+
+Current GitHub Pages Version:
+⚠️ Client-side only
+⚠️ Basic DOCX text extraction
+⚠️ Limited file processing`;
+    
+    alert(info);
+}
+
 // Export PDF using jsPDF
 function exportPDF() {
     try {
@@ -402,4 +456,35 @@ function clearAllData() {
         clearOldData();
         showStatus('✅ All data cleared successfully!', 'success');
     }
+}
+
+// Show full version deployment information
+function showFullVersionInfo() {
+    const info = `🚀 DEPLOY FULL VERSION FOR COMPLETE FUNCTIONALITY
+
+To get full DOCX and PDF support:
+
+1. NETLIFY (Recommended - Free):
+   • Go to netlify.com
+   • Connect GitHub repo: https://github.com/0xabhiram/Arjun-Shetty
+   • Auto-deploy with full backend support
+
+2. RENDER (Free Tier):
+   • Go to render.com
+   • Connect GitHub repo
+   • Deploy as Web Service
+
+Features in Full Version:
+✅ Complete DOCX/PDF processing
+✅ Server-side frame extraction
+✅ Advanced PDF export
+✅ Data persistence
+✅ No file size limits
+
+Current GitHub Pages Version:
+⚠️ Client-side only
+⚠️ Basic DOCX text extraction
+⚠️ Limited file processing`;
+    
+    alert(info);
 }
