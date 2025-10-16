@@ -35,40 +35,66 @@ def extract_frames_from_pdf(file_path):
 
 
 def parse_frames(text):
-    """Parse text to extract frames"""
+    """Parse text to extract frames - supports multiple formats"""
     frames = []
     
     if not text or not text.strip():
         return frames
     
-    # Split by Frame X: pattern
-    pattern = r'Frame\s+(\d+)\s*:'
-    parts = re.split(pattern, text, flags=re.IGNORECASE)
+    # Try different frame patterns
+    patterns = [
+        # Pattern 1: "Frame 1:" format
+        r'Frame\s+(\d+)\s*:(.*?)(?=Frame\s+\d+\s*:|$)',
+        # Pattern 2: "Frame 1 [timestamp] format
+        r'Frame\s+(\d+)\s*\[([^\]]*)\]\s*(.*?)(?=Frame\s+\d+\s*\[|Frame\s+\d+\s*:|$)',
+        # Pattern 3: "Frame 1" followed by newline
+        r'Frame\s+(\d+)\s*\n(.*?)(?=Frame\s+\d+\s*|$)',
+        # Pattern 4: "Frame 1 -" format
+        r'Frame\s+(\d+)\s*-\s*(.*?)(?=Frame\s+\d+\s*-|$)'
+    ]
     
-    # parts[0] is text before first frame (ignore)
-    # parts[1] = frame number, parts[2] = content, parts[3] = frame number, parts[4] = content, ...
-    for i in range(1, len(parts), 2):
-        if i + 1 < len(parts):
-            frame_num = parts[i].strip()
-            content = parts[i + 1].strip()
+    for pattern in patterns:
+        matches = re.finditer(pattern, text, re.IGNORECASE | re.DOTALL)
+        
+        for match in matches:
+            frame_num = match.group(1).strip()
             
-            # Remove next frame marker if present
+            if len(match.groups()) == 2:
+                # Pattern 1, 3, 4: content is in group 2
+                content = match.group(2).strip()
+            elif len(match.groups()) == 3:
+                # Pattern 2: timestamp in group 2, content in group 3
+                timestamp = match.group(2).strip()
+                content = match.group(3).strip()
+                
+                # Include timestamp in content if present
+                if timestamp:
+                    content = f"[{timestamp}] {content}"
+            
+            # Clean up content
             content_lines = content.split('\n')
             cleaned_content = []
             for line in content_lines:
-                if re.match(r'Frame\s+\d+\s*:', line, re.IGNORECASE):
+                if re.match(r'Frame\s+\d+\s*', line, re.IGNORECASE):
                     break
                 cleaned_content.append(line)
             
             cleaned_text = '\n'.join(cleaned_content).strip()
             
-            # Only add frame if it has content
-            if cleaned_text:
+            # Only add frame if it has content and doesn't already exist
+            if cleaned_text and not any(f.frame_number == frame_num for f in frames):
                 frame = Frame(
                     frame_number=frame_num,
                     content=cleaned_text
                 )
                 frames.append(frame)
+        
+        # If we found frames with this pattern, stop trying other patterns
+        if frames:
+            break
+    
+    # Sort frames by frame number
+    frames.sort(key=lambda x: int(x.frame_number))
     
     return frames
 

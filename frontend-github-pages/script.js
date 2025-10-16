@@ -50,7 +50,7 @@ async function handleFileUpload(event) {
         const frames = parseFrames(content);
         
         if (frames.length === 0) {
-            showStatus('No frames found. Make sure your file has "Frame X:" format.', 'error');
+            showStatus(`No frames found. Supported formats:\n• Frame 1: content\n• Frame 1 [timestamp] content\n• Frame 1\ncontent\n• Frame 1 - content`, 'error');
             return;
         }
         
@@ -97,32 +97,73 @@ function readDocxFile(file) {
     });
 }
 
-// Parse frames from text
+// Parse frames from text - supports multiple formats
 function parseFrames(text) {
     const frames = [];
-    const pattern = /Frame\s+(\d+)\s*:([\s\S]*?)(?=Frame\s+\d+\s*:|$)/gi;
     
-    let match;
-    while ((match = pattern.exec(text)) !== null) {
-        const frameNumber = match[1].trim();
-        const content = match[2].trim();
+    // Try different frame patterns
+    const patterns = [
+        // Pattern 1: "Frame 1:" format
+        /Frame\s+(\d+)\s*:([\s\S]*?)(?=Frame\s+\d+\s*:|$)/gi,
+        // Pattern 2: "Frame 1 [timestamp] format
+        /Frame\s+(\d+)\s*\[([^\]]*)\]\s*([\s\S]*?)(?=Frame\s+\d+\s*\[|Frame\s+\d+\s*:|$)/gi,
+        // Pattern 3: "Frame 1" followed by newline
+        /Frame\s+(\d+)\s*\n([\s\S]*?)(?=Frame\s+\d+\s*|$)/gi,
+        // Pattern 4: "Frame 1 -" format
+        /Frame\s+(\d+)\s*-\s*([\s\S]*?)(?=Frame\s+\d+\s*-|$)/gi
+    ];
+    
+    for (const pattern of patterns) {
+        let match;
+        pattern.lastIndex = 0; // Reset regex state
         
-        if (content) {
-            frames.push({
-                frame_number: frameNumber,
-                frame_tone: "Informative",
-                content: content,
-                frame_type: "Live Footage",
-                voice_over_required: false,
-                editing_required: false,
-                facilitator_costume_props: "",
-                scene_description: "",
-                camera_notes: "",
-                editing_notes: "",
-                suggestions: ""
-            });
+        while ((match = pattern.exec(text)) !== null) {
+            const frameNumber = match[1].trim();
+            let content = '';
+            
+            if (match.length === 3) {
+                // Pattern 1, 3, 4: content is in match[2]
+                content = match[2].trim();
+            } else if (match.length === 4) {
+                // Pattern 2: timestamp in match[2], content in match[3]
+                const timestamp = match[2].trim();
+                content = match[3].trim();
+                
+                // Include timestamp in content if present
+                if (timestamp) {
+                    content = `[${timestamp}] ${content}`;
+                }
+            }
+            
+            if (content) {
+                // Check if this frame number already exists
+                const existingFrame = frames.find(f => f.frame_number === frameNumber);
+                if (!existingFrame) {
+                    frames.push({
+                        frame_number: frameNumber,
+                        frame_tone: "Informative",
+                        content: content,
+                        frame_type: "Live Footage",
+                        voice_over_required: false,
+                        editing_required: false,
+                        facilitator_costume_props: "",
+                        scene_description: "",
+                        camera_notes: "",
+                        editing_notes: "",
+                        suggestions: ""
+                    });
+                }
+            }
+        }
+        
+        // If we found frames with this pattern, stop trying other patterns
+        if (frames.length > 0) {
+            break;
         }
     }
+    
+    // Sort frames by frame number
+    frames.sort((a, b) => parseInt(a.frame_number) - parseInt(b.frame_number));
     
     return frames;
 }
@@ -382,7 +423,7 @@ function showStatus(message, type) {
 // Clear old data and load saved frames on page load
 window.addEventListener('load', () => {
     // Debug: Check if we're running the latest version
-    console.log('Frame Extractor v2.1 loaded - DOCX support enabled');
+    console.log('Frame Extractor v2.2 loaded - Enhanced frame parsing enabled');
     console.log('Mammoth library available:', typeof mammoth !== 'undefined');
     
     // Clear any old/stale data first
