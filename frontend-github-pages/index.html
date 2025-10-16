@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frame Extractor - Client-Side Version</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📽️ Frame Extractor</h1>
+            <p>Upload your document to extract and edit frames (Client-Side Version)</p>
+            <div class="version-badge">GitHub Pages Version</div>
+        </header>
+
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <div class="upload-box">
+                <input type="file" id="fileInput" accept=".txt,.docx" style="display: none;">
+                <button id="uploadBtn" class="btn btn-primary">
+                    <span id="uploadIcon">📁</span> Choose File
+                </button>
+                <p id="fileName" class="file-name"></p>
+                <p class="info-text">Note: This version works with text files and basic DOCX files. For full functionality, use the server version.</p>
+            </div>
+            <div id="uploadStatus" class="status-message"></div>
+        </section>
+
+        <!-- Frames Section -->
+        <section id="framesSection" class="frames-section" style="display: none;">
+            <div class="frames-header">
+                <h2>Extracted Frames</h2>
+                <div class="action-buttons">
+                    <button id="saveBtn" class="btn btn-success">💾 Save Changes</button>
+                    <button id="exportBtn" class="btn btn-export">📄 Export PDF</button>
+                </div>
+            </div>
+            
+            <div id="framesContainer"></div>
+        </section>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
