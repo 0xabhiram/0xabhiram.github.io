@@ -540,7 +540,7 @@ function showStatus(message, type) {
 // Clear old data and load saved frames on page load
 window.addEventListener('load', () => {
     // Debug: Check if we're running the latest version
-    console.log('Frame Extractor v2.5 loaded - Clean table format with mobile fixes');
+    console.log('Frame Extractor v2.6 loaded - COMPLETE mobile text corruption fix');
     console.log('Mammoth library available:', typeof mammoth !== 'undefined');
     
     // Clear any old/stale data first
