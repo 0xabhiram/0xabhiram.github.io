@@ -10,12 +10,14 @@ const framesSection = document.getElementById('framesSection');
 const framesContainer = document.getElementById('framesContainer');
 const saveBtn = document.getElementById('saveBtn');
 const exportBtn = document.getElementById('exportBtn');
+const clearBtn = document.getElementById('clearBtn');
 
 // Event Listeners
 uploadBtn.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', handleFileUpload);
 saveBtn.addEventListener('click', saveFrames);
 exportBtn.addEventListener('click', exportPDF);
+clearBtn.addEventListener('click', clearAllData);
 
 // Handle file upload (client-side)
 async function handleFileUpload(event) {
@@ -232,6 +234,14 @@ function saveFrames() {
     }
 }
 
+// Clear all data function
+function clearAllData() {
+    if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+        clearOldData();
+        showStatus('✅ All data cleared successfully!', 'success');
+    }
+}
+
 // Export PDF using jsPDF
 function exportPDF() {
     try {
@@ -309,15 +319,87 @@ function showStatus(message, type) {
     }
 }
 
-// Load saved frames on page load
+// Clear old data and load saved frames on page load
 window.addEventListener('load', () => {
+    // Clear any old/stale data first
+    clearOldData();
+    
     const savedFrames = localStorage.getItem('frameExtractorFrames');
     if (savedFrames) {
         try {
             currentFrames = JSON.parse(savedFrames);
-            displayFrames(currentFrames);
+            // Only display if frames are recent (within 24 hours)
+            if (isRecentData(savedFrames)) {
+                displayFrames(currentFrames);
+            } else {
+                clearOldData();
+                showStatus('Old data cleared. Please upload a new document.', 'info');
+            }
         } catch (error) {
             console.log('Could not load saved frames');
+            clearOldData();
         }
     }
 });
+
+// Clear old data from localStorage
+function clearOldData() {
+    localStorage.removeItem('frameExtractorFrames');
+    localStorage.removeItem('frameExtractorTimestamp');
+    currentFrames = [];
+    framesSection.style.display = 'none';
+    framesContainer.innerHTML = '';
+    fileName.textContent = '';
+}
+
+// Check if data is recent (within 24 hours)
+function isRecentData(data) {
+    const timestamp = localStorage.getItem('frameExtractorTimestamp');
+    if (!timestamp) return false;
+    
+    const now = Date.now();
+    const dataTime = parseInt(timestamp);
+    const hoursDiff = (now - dataTime) / (1000 * 60 * 60);
+    
+    return hoursDiff < 24; // Keep data for 24 hours
+}
+
+// Add timestamp when saving data
+function saveFrames() {
+    // Collect data from all form fields
+    const updatedFrames = currentFrames.map((frame, index) => {
+        const updatedFrame = { ...frame };
+        
+        // Get all inputs for this frame
+        const inputs = document.querySelectorAll(`[data-index="${index}"]`);
+        
+        inputs.forEach(input => {
+            const field = input.dataset.field;
+            if (input.type === 'checkbox') {
+                updatedFrame[field] = input.checked;
+            } else {
+                updatedFrame[field] = input.value;
+            }
+        });
+        
+        return updatedFrame;
+    });
+
+    try {
+        // Save to localStorage with timestamp
+        localStorage.setItem('frameExtractorFrames', JSON.stringify(updatedFrames));
+        localStorage.setItem('frameExtractorTimestamp', Date.now().toString());
+        showStatus('✅ Changes saved to local storage!', 'success');
+        currentFrames = updatedFrames;
+    } catch (error) {
+        showStatus(`❌ Error saving: ${error.message}`, 'error');
+    }
+}
+
+// Clear all data function
+function clearAllData() {
+    if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+        clearOldData();
+        showStatus('✅ All data cleared successfully!', 'success');
+    }
+}

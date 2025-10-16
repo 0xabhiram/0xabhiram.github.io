@@ -30,7 +30,12 @@ jobs:
       - name: Copy frontend files
         run: |
           mkdir -p dist
+          # Copy the main index.html first
+          cp index.html dist/
+          # Copy GitHub Pages version files
           cp -r frontend-github-pages/* dist/
+          # Ensure all necessary files are present
+          ls -la dist/
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

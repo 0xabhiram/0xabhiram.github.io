@@ -143,6 +143,16 @@ header p {
     box-shadow: 0 10px 20px rgba(245, 87, 108, 0.4);
 }
 
+.btn-danger {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(231, 76, 60, 0.4);
+}
+
 /* Frames Section */
 .frames-section {
     padding: 40px;
