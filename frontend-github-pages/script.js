@@ -113,6 +113,8 @@ function parseFrames(text) {
         /Frame\s+(\d+)\s*-\s*([\s\S]*?)(?=Frame\s+\d+\s*-|$)/gi
     ];
     
+    console.log('Trying to parse frames from text:', text.substring(0, 200) + '...');
+    
     for (const pattern of patterns) {
         let match;
         pattern.lastIndex = 0; // Reset regex state
@@ -158,6 +160,7 @@ function parseFrames(text) {
         
         // If we found frames with this pattern, stop trying other patterns
         if (frames.length > 0) {
+            console.log(`Found ${frames.length} frames using pattern ${patterns.indexOf(pattern) + 1}`);
             break;
         }
     }
@@ -423,7 +426,7 @@ function showStatus(message, type) {
 // Clear old data and load saved frames on page load
 window.addEventListener('load', () => {
     // Debug: Check if we're running the latest version
-    console.log('Frame Extractor v2.2 loaded - Enhanced frame parsing enabled');
+    console.log('Frame Extractor v2.3 loaded - Enhanced frame parsing enabled');
     console.log('Mammoth library available:', typeof mammoth !== 'undefined');
     
     // Clear any old/stale data first
