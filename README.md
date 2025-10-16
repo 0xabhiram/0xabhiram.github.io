@@ -40,7 +40,8 @@ project/
 
 1. **Clone the repository**
    ```bash
-   cd ProjectX-main
+   git clone https://github.com/0xabhiram/Arjun-Shetty.git
+   cd Arjun-Shetty
    ```
 
 2. **Install Python dependencies**
@@ -107,7 +108,7 @@ Each frame contains the following editable fields:
 ## Deployment to Render
 
 1. **Create a new Web Service** on Render
-2. **Connect your repository**
+2. **Connect your repository**: https://github.com/0xabhiram/Arjun-Shetty
 3. **Configure settings**:
    - Build Command: `pip install -r requirements.txt`
    - Start Command: `cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT`
@@ -135,4 +136,3 @@ For the frontend, you can:
 ## License
 
 MIT License - feel free to use and modify as needed.
-
