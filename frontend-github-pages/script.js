@@ -288,99 +288,107 @@ function displayFrames(frames) {
     });
 }
 
-// Create frame card HTML
+// Create frame card HTML with table format
 function createFrameCard(frame, index) {
     const card = document.createElement('div');
     card.className = 'frame-card';
     card.innerHTML = `
-        <div class="frame-header">
-            <h3>Frame ${frame.frame_number}</h3>
-            <button class="btn-collapse" onclick="toggleFrame(${index})">▼</button>
-        </div>
-        <div class="frame-body" id="frame-${index}">
-            <div class="form-group">
-                <label>Frame Number</label>
-                <input type="text" class="form-input" data-index="${index}" data-field="frame_number" value="${frame.frame_number}">
-            </div>
-
-            <div class="form-group">
-                <label>Frame Tone</label>
-                <select class="form-input" data-index="${index}" data-field="frame_tone">
-                    <option value="Informative" ${frame.frame_tone === 'Informative' ? 'selected' : ''}>Informative</option>
-                    <option value="Cinematic" ${frame.frame_tone === 'Cinematic' ? 'selected' : ''}>Cinematic</option>
-                    <option value="Emotional" ${frame.frame_tone === 'Emotional' ? 'selected' : ''}>Emotional</option>
-                    <option value="Playful" ${frame.frame_tone === 'Playful' ? 'selected' : ''}>Playful</option>
-                    <option value="Serious" ${frame.frame_tone === 'Serious' ? 'selected' : ''}>Serious</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Content — Dialogues / Narration</label>
-                <textarea class="form-textarea" data-index="${index}" data-field="content" rows="6">${frame.content}</textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Frame Type</label>
-                <select class="form-input" data-index="${index}" data-field="frame_type">
-                    <option value="Live Footage" ${frame.frame_type === 'Live Footage' ? 'selected' : ''}>Live Footage</option>
-                    <option value="Animation" ${frame.frame_type === 'Animation' ? 'selected' : ''}>Animation</option>
-                    <option value="Live Footage + Animation" ${frame.frame_type === 'Live Footage + Animation' ? 'selected' : ''}>Live Footage + Animation</option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
+        <div class="frame-header">Frame ${frame.frame_number}</div>
+        <table class="frame-table">
+            <tr>
+                <th>Field</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td><strong>Frame Number</strong></td>
+                <td><input type="text" class="form-input" data-index="${index}" data-field="frame_number" value="${frame.frame_number}"></td>
+            </tr>
+            <tr>
+                <td><strong>Frame Tone</strong></td>
+                <td>
+                    <select class="form-select" data-index="${index}" data-field="frame_tone">
+                        <option value="Informative" ${frame.frame_tone === 'Informative' ? 'selected' : ''}>Informative</option>
+                        <option value="Cinematic" ${frame.frame_tone === 'Cinematic' ? 'selected' : ''}>Cinematic</option>
+                        <option value="Emotional" ${frame.frame_tone === 'Emotional' ? 'selected' : ''}>Emotional</option>
+                        <option value="Playful" ${frame.frame_tone === 'Playful' ? 'selected' : ''}>Playful</option>
+                        <option value="Serious" ${frame.frame_tone === 'Serious' ? 'selected' : ''}>Serious</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Content — Dialogues / Narration</strong></td>
+                <td><textarea class="form-textarea" data-index="${index}" data-field="content" rows="4">${frame.content}</textarea></td>
+            </tr>
+            <tr>
+                <td><strong>Frame Type</strong></td>
+                <td>
+                    <select class="form-select" data-index="${index}" data-field="frame_type">
+                        <option value="Live Footage" ${frame.frame_type === 'Live Footage' ? 'selected' : ''}>Live Footage</option>
+                        <option value="Animation" ${frame.frame_type === 'Animation' ? 'selected' : ''}>Animation</option>
+                        <option value="Live Footage + Animation" ${frame.frame_type === 'Live Footage + Animation' ? 'selected' : ''}>Live Footage + Animation</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Voice Over Required?</strong></td>
+                <td>
                     <label class="toggle-label">
                         <input type="checkbox" class="form-toggle" data-index="${index}" data-field="voice_over_required" ${frame.voice_over_required ? 'checked' : ''}>
                         <span class="toggle-slider"></span>
-                        <span>Voice Over Required?</span>
+                        <span class="toggle-label">${frame.voice_over_required ? 'Yes' : 'No'}</span>
                     </label>
-                </div>
-
-                <div class="form-group">
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Editing Required?</strong></td>
+                <td>
                     <label class="toggle-label">
                         <input type="checkbox" class="form-toggle" data-index="${index}" data-field="editing_required" ${frame.editing_required ? 'checked' : ''}>
                         <span class="toggle-slider"></span>
-                        <span>Editing Required?</span>
+                        <span class="toggle-label">${frame.editing_required ? 'Yes' : 'No'}</span>
                     </label>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Facilitator Costume / Props</label>
-                <input type="text" class="form-input" data-index="${index}" data-field="facilitator_costume_props" value="${frame.facilitator_costume_props}">
-            </div>
-
-            <div class="form-group">
-                <label>Scene Description</label>
-                <textarea class="form-textarea" data-index="${index}" data-field="scene_description" rows="4">${frame.scene_description}</textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Camera / Cinematographer Notes</label>
-                <textarea class="form-textarea" data-index="${index}" data-field="camera_notes" rows="4">${frame.camera_notes}</textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Editing Notes</label>
-                <textarea class="form-textarea" data-index="${index}" data-field="editing_notes" rows="4">${frame.editing_notes}</textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Suggestions for Frame Improvement</label>
-                <textarea class="form-textarea" data-index="${index}" data-field="suggestions" rows="4">${frame.suggestions}</textarea>
-            </div>
-        </div>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Facilitator Costume / Props</strong></td>
+                <td><input type="text" class="form-input" data-index="${index}" data-field="facilitator_costume_props" value="${frame.facilitator_costume_props}"></td>
+            </tr>
+            <tr>
+                <td><strong>Scene Description</strong></td>
+                <td><textarea class="form-textarea" data-index="${index}" data-field="scene_description" rows="3">${frame.scene_description}</textarea></td>
+            </tr>
+            <tr>
+                <td><strong>Camera / Cinematographer Notes</strong></td>
+                <td><textarea class="form-textarea" data-index="${index}" data-field="camera_notes" rows="3">${frame.camera_notes}</textarea></td>
+            </tr>
+            <tr>
+                <td><strong>Editing Notes</strong></td>
+                <td><textarea class="form-textarea" data-index="${index}" data-field="editing_notes" rows="3">${frame.editing_notes}</textarea></td>
+            </tr>
+            <tr>
+                <td><strong>Suggestions for Frame Improvement</strong></td>
+                <td><textarea class="form-textarea" data-index="${index}" data-field="suggestions" rows="3">${frame.suggestions}</textarea></td>
+            </tr>
+        </table>
     `;
 
     return card;
 }
 
-// Toggle frame collapse
-function toggleFrame(index) {
-    const frameBody = document.getElementById(`frame-${index}`);
-    frameBody.classList.toggle('collapsed');
+// Update toggle labels when toggles change
+function updateToggleLabel(checkbox) {
+    const label = checkbox.parentNode.querySelector('.toggle-label');
+    if (label) {
+        label.textContent = checkbox.checked ? 'Yes' : 'No';
+    }
 }
+
+// Add event listeners for toggles
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('form-toggle')) {
+        updateToggleLabel(e.target);
+    }
+});
 
 // Save frames (local storage)
 function saveFrames() {
@@ -532,7 +540,7 @@ function showStatus(message, type) {
 // Clear old data and load saved frames on page load
 window.addEventListener('load', () => {
     // Debug: Check if we're running the latest version
-    console.log('Frame Extractor v2.4 loaded - Text input with tabs enabled');
+    console.log('Frame Extractor v2.5 loaded - Clean table format with mobile fixes');
     console.log('Mammoth library available:', typeof mammoth !== 'undefined');
     
     // Clear any old/stale data first
