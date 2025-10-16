@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frame Extractor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📽️ Frame Extractor</h1>
+            <p>Upload your document to extract and edit frames</p>
+        </header>
+
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <div class="upload-box">
+                <input type="file" id="fileInput" accept=".docx,.pdf" style="display: none;">
+                <button id="uploadBtn" class="btn btn-primary">
+                    <span id="uploadIcon">📁</span> Choose File
+                </button>
+                <p id="fileName" class="file-name"></p>
+            </div>
+            <div id="uploadStatus" class="status-message"></div>
+        </section>
+
+        <!-- Frames Section -->
+        <section id="framesSection" class="frames-section" style="display: none;">
+            <div class="frames-header">
+                <h2>Extracted Frames</h2>
+                <div class="action-buttons">
+                    <button id="saveBtn" class="btn btn-success">💾 Save Changes</button>
+                    <button id="exportBtn" class="btn btn-export">📄 Export PDF</button>
+                </div>
+            </div>
+            
+            <div id="framesContainer"></div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
