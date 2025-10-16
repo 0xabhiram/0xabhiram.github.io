@@ -34,6 +34,12 @@ async function handleFileUpload(event) {
         if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
             content = await readTextFile(file);
         } else if (file.name.endsWith('.docx')) {
+            // Check if Mammoth library is available
+            if (typeof mammoth === 'undefined') {
+                showStatus('DOCX processing library loading... Please wait and try again.', 'error');
+                return;
+            }
+            showStatus('Processing DOCX file...', 'info');
             content = await readDocxFile(file);
         } else {
             showStatus('Unsupported file type. Please use .txt or .docx files.', 'error');
@@ -375,6 +381,10 @@ function showStatus(message, type) {
 
 // Clear old data and load saved frames on page load
 window.addEventListener('load', () => {
+    // Debug: Check if we're running the latest version
+    console.log('Frame Extractor v2.1 loaded - DOCX support enabled');
+    console.log('Mammoth library available:', typeof mammoth !== 'undefined');
+    
     // Clear any old/stale data first
     clearOldData();
     
